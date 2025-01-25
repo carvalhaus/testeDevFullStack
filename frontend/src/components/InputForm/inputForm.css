@@ -1,0 +1,36 @@
+.inputForm {
+  background-color: transparent;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.inputForm::placeholder {
+  text-transform: uppercase;
+}
+
+.inputForm:focus {
+  outline: none;
+  outline-offset: none;
+  background: transparent;
+}
+
+.white {
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+.white::placeholder {
+  color: #fff;
+}
+
+.black {
+  border: 2px solid #000;
+  color: #000;
+}
+
+.black::placeholder {
+  color: #000;
+}

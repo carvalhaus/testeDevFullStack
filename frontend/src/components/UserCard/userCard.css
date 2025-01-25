@@ -1,0 +1,41 @@
+.userCard {
+  background: #f0f1f2;
+  width: 90%;
+  padding: 1rem;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.userInfo {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.userIcon {
+  background: rgb(222, 108, 0);
+  padding: 0.5rem;
+  border-radius: 100%;
+}
+
+.userEmail {
+  font-size: 0.75rem;
+}
+
+.userName {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 425px) {
+  .userEmail,
+  .userName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 6rem;
+  }
+}

@@ -1,0 +1,73 @@
+main.mainLogin {
+  background: radial-gradient(
+      circle,
+      hsla(0, 0%, 0%, 0.5) 0%,
+      rgba(0, 0, 0, 1) 95%
+    ),
+    url("../../assets/bg-image.jpg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  font-size: 2rem;
+  text-align: center;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.loginHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+}
+
+.loginHeader p {
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.loginFooter small {
+  font-size: 0.625rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  main.mainLogin {
+    font-size: 1.5rem;
+    justify-content: center;
+  }
+
+  .loginHeader {
+    padding: 0.75rem;
+  }
+
+  .loginFooter small {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  main.mainLogin {
+    font-size: 1.25rem;
+    padding: 0.5rem;
+  }
+
+  .loginHeader {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 2.5rem;
+  }
+
+  .loginHeader p {
+    font-size: 0.6rem;
+  }
+
+  .loginFooter {
+    text-align: center;
+  }
+}

@@ -1,0 +1,15 @@
+.buttonForm {
+  background: linear-gradient(to right, #565658, #2a2a2a);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 2rem;
+  font-size: 1rem;
+  color: #fff;
+  width: fit-content;
+  font-weight: 500;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.buttonForm:hover {
+  opacity: 0.9;
+}
