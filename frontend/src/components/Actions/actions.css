@@ -23,6 +23,11 @@
   opacity: 0.9;
 }
 
+.actions:disabled {
+  cursor: not-allowed;
+  background: #bdbdbd;
+}
+
 .actions span {
   font-size: small;
 }

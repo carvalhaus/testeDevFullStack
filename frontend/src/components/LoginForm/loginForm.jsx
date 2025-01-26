@@ -4,6 +4,7 @@ import InputForm from "../InputForm/inputForm";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import SubmitButton from "../SubmitButton/submitButton";
+import { login } from "../../services/AuthService";
 
 function LoginForm() {
   let navigate = useNavigate();
@@ -12,22 +13,30 @@ function LoginForm() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   function handleInputChange(id, value) {
     setData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
-
-    console.log(data);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    navigate("/dashboard");
-
-    console.log(`SUBMIT: ${data.email} + ${data.password}`);
+    login(data.email, data.password)
+      .then((response) => {
+        if (response) {
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("id", response.id);
+          navigate("/dashboard");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Invalid email and/or password!");
+      });
   }
 
   return (
@@ -64,6 +73,8 @@ function LoginForm() {
             Acesse agora
           </SubmitButton>
         </form>
+
+        {error && <p>{error}</p>}
       </div>
     </section>
   );

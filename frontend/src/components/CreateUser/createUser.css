@@ -18,3 +18,8 @@
 .createUserButton:hover {
   opacity: 0.8;
 }
+
+.createUserButton:disabled {
+  cursor: not-allowed;
+  background: #bdbdbd;
+}

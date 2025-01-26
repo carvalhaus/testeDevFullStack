@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./actions.css";
 import UserModal from "../UserModal/userModal";
 
-function Actions() {
+function Actions({ loggedUserLevel }) {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,7 +50,17 @@ function Actions() {
 
   return (
     <div className="actionsContainer">
-      <button className="actions" onClick={openDropdown} ref={buttonRef}>
+      <button
+        className="actions"
+        onClick={openDropdown}
+        ref={buttonRef}
+        disabled={loggedUserLevel === 3}
+        title={
+          loggedUserLevel === 3
+            ? "Você não tem permissão para editar ou excluir usuários."
+            : ""
+        }
+      >
         Ações<span>&#11206;</span>
       </button>
 
@@ -59,7 +69,17 @@ function Actions() {
           <button className="dropdownItem" onClick={openEditModal}>
             Editar
           </button>
-          <button className="dropdownItem">Excluir</button>
+          <button
+            className="dropdownItem"
+            disabled={loggedUserLevel === 2}
+            title={
+              loggedUserLevel === 2
+                ? "Você não tem permissão para excluir usuários."
+                : ""
+            }
+          >
+            Excluir
+          </button>
         </div>
       )}
 

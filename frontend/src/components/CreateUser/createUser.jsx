@@ -3,7 +3,7 @@ import userPlus from "../../assets/userPlus.svg";
 import { useEffect, useRef, useState } from "react";
 import UserModal from "../UserModal/userModal";
 
-function CreateUser() {
+function CreateUser({ disabled }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const buttonRef = useRef(null);
   const modalRef = useRef(null);
@@ -33,7 +33,13 @@ function CreateUser() {
 
   return (
     <div className="createUserContainer">
-      <button className="createUserButton" onClick={openModal} ref={buttonRef}>
+      <button
+        className="createUserButton"
+        onClick={openModal}
+        ref={buttonRef}
+        disabled={disabled}
+        title={disabled ? "Você não tem permissão para criar usuários." : ""}
+      >
         Criar usuário
         <img src={userPlus} width={22} height={22} />
       </button>
