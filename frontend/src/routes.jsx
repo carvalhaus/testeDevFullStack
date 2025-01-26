@@ -1,6 +1,7 @@
 import Login from "./pages/Login/login";
 import Dashboard from "./pages/Dashboard/dashboard";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { UserProvider } from "./contexts/UserContext";
 
 function RoutesProvider() {
   function PrivateRoute({ children }) {
@@ -20,7 +21,9 @@ function RoutesProvider() {
           exact
           element={
             <PrivateRoute>
-              <Dashboard />
+              <UserProvider>
+                <Dashboard />
+              </UserProvider>
             </PrivateRoute>
           }
         />

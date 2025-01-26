@@ -1,42 +1,97 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import "./userModal.css";
 import InputForm from "../InputForm/inputForm";
 import SubmitButton from "../SubmitButton/submitButton";
+import { createUser, updateUser } from "../../services/UsersService";
+import ErrorMessage from "../ErrorMessage/errorMessage";
+import { useUserContext } from "../../contexts/UserContext";
 
-function UserModal(props, ref) {
+function UserModal({ title, onClose, user }, ref) {
+  const { loadUsers, loadUser, error, setError, userData } = useUserContext();
+
   const [data, setData] = useState({
     email: "",
     name: "",
     password: "",
     confirmPassword: "",
-    userLevel: "",
+    userLevel: 1,
   });
+
+  useEffect(() => {
+    if (user) {
+      setData({
+        email: user.email || "",
+        name: user.name || "",
+        password: "",
+        confirmPassword: "",
+        userLevel: user.level || 1,
+      });
+    }
+  }, [user]);
 
   function handleInputChange(id, value) {
     setData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
-
-    console.log(data);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    console.log(
-      `SUBMIT: ${data.email}; ${data.name}; ${data.password}; ${data.confirmPassword}; ${data.userLevel}; `
-    );
+    if (data.password !== data.confirmPassword) {
+      return setError("Senha e confirmação de senha não coincidem!");
+    }
+
+    const token = localStorage.getItem("token");
+
+    const { confirmPassword, ...formData } = data;
+
+    if (title === "Cadastrar") {
+      createUser(formData, token)
+        .then(() => {
+          onClose();
+          loadUsers();
+        })
+        .catch((err) => {
+          if (err.response && err.response.status === 401) {
+            setError(err.response ? err.response.data : err.message);
+
+            console.error(err);
+          }
+        });
+    } else {
+      let updateData = { ...formData };
+
+      if (!formData.password) {
+        const { password, ...filteredData } = formData;
+        updateData = filteredData;
+      }
+
+      updateUser(updateData, token, user.id)
+        .then(() => {
+          onClose();
+          loadUsers();
+          loadUser(userData.id);
+        })
+        .catch((err) => {
+          if (err.response && err.response.status === 401) {
+            setError(err.response);
+
+            console.error(err);
+          }
+        });
+    }
   }
 
   return (
     <div className="userModal">
       <form className="modalForm" ref={ref} onSubmit={handleSubmit}>
-        <button type="button" className="closeButton" onClick={props.onClose}>
+        <button type="button" className="closeButton" onClick={onClose}>
           &times;
         </button>
 
-        <p className="modalFormHeader">{`${props.title}`} usuário</p>
+        <p className="modalFormHeader">{`${title}`} usuário</p>
 
         <InputForm
           variant="black"
@@ -44,6 +99,7 @@ function UserModal(props, ref) {
           placeholder="email"
           id="email"
           value={data.email}
+          required={true}
           onInputChange={handleInputChange}
         />
 
@@ -53,6 +109,7 @@ function UserModal(props, ref) {
           placeholder="nome"
           id="name"
           value={data.name}
+          required={true}
           onInputChange={handleInputChange}
         />
 
@@ -62,6 +119,7 @@ function UserModal(props, ref) {
           placeholder="senha"
           id="password"
           value={data.password}
+          required={title === "Cadastrar"}
           onInputChange={handleInputChange}
         />
 
@@ -71,6 +129,7 @@ function UserModal(props, ref) {
           placeholder="confirmar senha"
           id="confirmPassword"
           value={data.confirmPassword}
+          required={title === "Cadastrar"}
           onInputChange={handleInputChange}
         />
 
@@ -78,12 +137,15 @@ function UserModal(props, ref) {
           className="userLevel"
           id="userLevel"
           value={data.userLevel}
+          required={true}
           onChange={(e) => handleInputChange("userLevel", e.target.value)}
         >
-          <option value="1">Administrador</option>
-          <option value="2">Moderador</option>
-          <option value="3">Leitor</option>
+          <option value={1}>Administrador</option>
+          <option value={2}>Moderador</option>
+          <option value={3}>Leitor</option>
         </select>
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
         <SubmitButton>Salvar</SubmitButton>
       </form>

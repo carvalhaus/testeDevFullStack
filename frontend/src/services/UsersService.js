@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_URL } from "./AuthService";
 
 export async function getUsers() {
-  const usersUrl = `http://127.0.0.1:8000/api/users/`;
+  const usersUrl = `${API_URL}users/`;
 
   const response = await axios.get(usersUrl);
 
@@ -9,9 +10,53 @@ export async function getUsers() {
 }
 
 export async function getUser(id) {
-  const userUrl = `http://127.0.0.1:8000/api/users/${id}`;
+  const userUrl = `${API_URL}users/${id}`;
 
   const response = await axios.get(userUrl);
+
+  return response.data;
+}
+
+export async function createUser(formData, token) {
+  const createUrl = `${API_URL}users/`;
+
+  const headers = { Authorization: `Bearer ${token}` };
+
+  const newUser = {
+    email: formData.email,
+    name: formData.name,
+    password: formData.password,
+    level: formData.userLevel,
+  };
+
+  const response = await axios.post(createUrl, newUser, { headers });
+
+  return response.data;
+}
+
+export async function updateUser(formData, token, id) {
+  const createUrl = `${API_URL}users/${id}`;
+
+  const headers = { Authorization: `Bearer ${token}` };
+
+  const updatedUser = {
+    email: formData.email,
+    name: formData.name,
+    password: formData.password,
+    level: formData.userLevel,
+  };
+
+  const response = await axios.put(createUrl, updatedUser, { headers });
+
+  return response.data;
+}
+
+export async function deleteUser(token, id) {
+  const deleteUrl = `${API_URL}users/${id}`;
+
+  const headers = { Authorization: `Bearer ${token}` };
+
+  const response = await axios.delete(deleteUrl, { headers });
 
   return response.data;
 }

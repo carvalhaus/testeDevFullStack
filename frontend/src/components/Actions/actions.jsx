@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import "./actions.css";
 import UserModal from "../UserModal/userModal";
+import { useUserContext } from "../../contexts/UserContext";
 
-function Actions({ loggedUserLevel }) {
+function Actions({ loggedUserId, loggedUserLevel, user }) {
+  const { removeUser } = useUserContext();
+
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const buttonRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -15,12 +19,20 @@ function Actions({ loggedUserLevel }) {
   }
 
   function openEditModal() {
+    setSelectedUser(user);
     setIsModalOpen(true);
-    setDropdownOpen(false); // Close dropdown when modal opens
+    setDropdownOpen(false);
   }
 
   function closeModal() {
     setIsModalOpen(false);
+    setSelectedUser(null);
+  }
+
+  function onDelete() {
+    const token = localStorage.getItem("token");
+
+    removeUser(user.id, token);
   }
 
   useEffect(() => {
@@ -37,7 +49,7 @@ function Actions({ loggedUserLevel }) {
       if (
         modalRef.current &&
         !modalRef.current.contains(event.target) &&
-        buttonRef.current && // Ensure the modal doesn't close when clicking the button
+        buttonRef.current &&
         !buttonRef.current.contains(event.target)
       ) {
         setIsModalOpen(false);
@@ -71,12 +83,15 @@ function Actions({ loggedUserLevel }) {
           </button>
           <button
             className="dropdownItem"
-            disabled={loggedUserLevel === 2}
+            disabled={loggedUserLevel === 2 || loggedUserId === user.id}
             title={
-              loggedUserLevel === 2
+              loggedUserId === user.id
+                ? "Você não tem permissão para excluir seu próprio perfil."
+                : "" || loggedUserLevel === 2
                 ? "Você não tem permissão para excluir usuários."
                 : ""
             }
+            onClick={onDelete}
           >
             Excluir
           </button>
@@ -84,7 +99,12 @@ function Actions({ loggedUserLevel }) {
       )}
 
       {isModalOpen && (
-        <UserModal ref={modalRef} title="Editar" onClose={closeModal} />
+        <UserModal
+          ref={modalRef}
+          title="Editar"
+          user={selectedUser}
+          onClose={closeModal}
+        />
       )}
     </div>
   );

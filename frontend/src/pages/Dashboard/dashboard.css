@@ -6,15 +6,16 @@ main.dashboard {
   );
   font-size: 2rem;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
 }
 
 .dashboardHeader {
   background: #f0f1f2;
-  padding: 2rem;
+  padding: 2rem 4rem;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
@@ -38,6 +39,7 @@ main.dashboard {
   font-size: 1rem;
   border: none;
   transition: opacity 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .userOptions button:hover {

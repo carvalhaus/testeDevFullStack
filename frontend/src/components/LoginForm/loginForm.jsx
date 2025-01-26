@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import SubmitButton from "../SubmitButton/submitButton";
 import { login } from "../../services/AuthService";
+import ErrorMessage from "../ErrorMessage/errorMessage";
 
 function LoginForm() {
   let navigate = useNavigate();
@@ -35,7 +36,7 @@ function LoginForm() {
       })
       .catch((err) => {
         console.error(err);
-        setError("Invalid email and/or password!");
+        setError("Email ou senha inválidos!");
       });
   }
 
@@ -57,6 +58,7 @@ function LoginForm() {
             id="email"
             value={data.email}
             variant="white"
+            required={true}
             onInputChange={handleInputChange}
           />
 
@@ -66,6 +68,7 @@ function LoginForm() {
             id="password"
             value={data.password}
             variant="white"
+            required={true}
             onInputChange={handleInputChange}
           />
 
@@ -74,7 +77,7 @@ function LoginForm() {
           </SubmitButton>
         </form>
 
-        {error && <p>{error}</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </div>
     </section>
   );

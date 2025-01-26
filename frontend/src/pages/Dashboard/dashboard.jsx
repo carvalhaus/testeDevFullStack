@@ -3,15 +3,31 @@ import CreateUser from "../../components/CreateUser/createUser";
 import UserCard from "../../components/UserCard/userCard";
 import senacLearning from "../../assets/senac-learning.webp";
 import { Link, useNavigate } from "react-router";
-import { useEffect, useState } from "react";
-import { getUser, getUsers } from "../../services/UsersService";
+import { useEffect, useRef, useState } from "react";
 import { logout } from "../../services/AuthService";
+import UserModal from "../../components/UserModal/userModal";
+import { useUserContext } from "../../contexts/UserContext";
 
 function Dashboard() {
   const navigate = useNavigate();
 
-  const [userData, setUserData] = useState({});
-  const [users, setUsers] = useState([]);
+  const { users, userData, loadUsers, loadUser } = useUserContext();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const buttonRef = useRef(null);
+  const modalRef = useRef(null);
+
+  function openEditModal() {
+    setSelectedUser(userData);
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  }
 
   function handleLogout(e) {
     e.preventDefault();
@@ -28,28 +44,27 @@ function Dashboard() {
   }
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
     const id = localStorage.getItem("id");
 
-    getUser(id)
-      .then((user) => {
-        console.log("User Data:", user);
-        setUserData(user);
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) return navigate("/");
+    loadUser(id);
 
-        console.error(err);
-      });
-
-    getUsers()
-      .then((users) => {
-        setUsers(users);
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) return navigate("/");
-
-        console.error(err);
-      });
+    loadUsers();
   }, []);
 
   return (
@@ -63,8 +78,28 @@ function Dashboard() {
           <h1>Bem vindo, {userData.name}</h1>
 
           <div className="userOptions">
-            <button>Editar perfil</button>
+            <button
+              ref={buttonRef}
+              onClick={openEditModal}
+              disabled={userData.level === 3}
+              title={
+                userData.level === 3
+                  ? "Você não tem permissão para editar seu perfil."
+                  : ""
+              }
+            >
+              Editar perfil
+            </button>
             <button onClick={handleLogout}>Logout</button>
+
+            {isModalOpen && (
+              <UserModal
+                ref={modalRef}
+                title="Editar"
+                user={selectedUser}
+                onClose={closeModal}
+              />
+            )}
           </div>
         </div>
       </header>
@@ -77,10 +112,9 @@ function Dashboard() {
         {users.map((user) => (
           <UserCard
             key={user.id}
-            id={user.id}
+            user={user}
+            loggedUserId={userData.id}
             loggedUserLevel={userData.level}
-            name={user.name}
-            email={user.email}
           />
         ))}
       </section>
