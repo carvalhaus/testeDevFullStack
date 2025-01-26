@@ -50,6 +50,7 @@ function UserModal({ title, onClose, user }, ref) {
     if (title === "Cadastrar") {
       createUser(formData, token)
         .then(() => {
+          setError("");
           onClose();
           loadUsers();
         })
@@ -70,6 +71,7 @@ function UserModal({ title, onClose, user }, ref) {
 
       updateUser(updateData, token, user.id)
         .then(() => {
+          setError("");
           onClose();
           loadUsers();
           loadUser(userData.id);
