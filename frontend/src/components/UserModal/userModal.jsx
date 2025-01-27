@@ -6,7 +6,7 @@ import { createUser, updateUser } from "../../services/UsersService";
 import ErrorMessage from "../ErrorMessage/errorMessage";
 import { useUserContext } from "../../contexts/UserContext";
 
-function UserModal({ title, onClose, user }, ref) {
+function UserModal({ title, onClose, user, loggedUserLevel }, ref) {
   const { loadUsers, loadUser, error, setError, userData } = useUserContext();
 
   const [data, setData] = useState({
@@ -27,6 +27,7 @@ function UserModal({ title, onClose, user }, ref) {
         userLevel: user.level || 1,
       });
     }
+    setError("");
   }, [user]);
 
   function handleInputChange(id, value) {
@@ -47,25 +48,32 @@ function UserModal({ title, onClose, user }, ref) {
 
     const { confirmPassword, ...formData } = data;
 
+    const finalData = { loggedUserLevel, ...formData };
+
     if (title === "Cadastrar") {
-      createUser(formData, token)
+      console.log(finalData);
+      createUser(finalData, token)
         .then(() => {
           setError("");
           onClose();
           loadUsers();
         })
         .catch((err) => {
-          if (err.response && err.response.status === 401) {
-            setError(err.response ? err.response.data : err.message);
+          if (err.status === 400 || err.status === 403 || err.status === 422) {
+            const errorMessage = err.response.data.message;
 
-            console.error(err);
+            setError(errorMessage);
+
+            alert(errorMessage);
           }
+
+          console.error(err);
         });
     } else {
-      let updateData = { ...formData };
+      let updateData = { ...finalData };
 
-      if (!formData.password) {
-        const { password, ...filteredData } = formData;
+      if (!finalData.password) {
+        const { password, ...filteredData } = finalData;
         updateData = filteredData;
       }
 
@@ -77,11 +85,15 @@ function UserModal({ title, onClose, user }, ref) {
           loadUser(userData.id);
         })
         .catch((err) => {
-          if (err.response && err.response.status === 401) {
-            setError(err.response);
+          if (err.status === 400 || err.status === 403 || err.status === 422) {
+            const errorMessage = err.response.data.message;
 
-            console.error(err);
+            setError(errorMessage);
+
+            alert(errorMessage);
           }
+
+          console.error(err);
         });
     }
   }

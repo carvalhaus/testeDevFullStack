@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { logout } from "../../services/AuthService";
 import UserModal from "../../components/UserModal/userModal";
 import { useUserContext } from "../../contexts/UserContext";
+import ErrorMessage from "../../components/ErrorMessage/errorMessage";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -92,12 +93,13 @@ function Dashboard() {
             </button>
             <button onClick={handleLogout}>Logout</button>
 
-            {isModalOpen && (
+            {userData && isModalOpen && (
               <UserModal
                 ref={modalRef}
                 title="Editar"
                 user={selectedUser}
                 onClose={closeModal}
+                loggedUserLevel={userData.level}
               />
             )}
           </div>
@@ -105,7 +107,10 @@ function Dashboard() {
       </header>
 
       <section className="createUsers">
-        <CreateUser disabled={userData.level === 3} />
+        <CreateUser
+          disabled={userData.level === 3}
+          loggedUserLevel={userData.level}
+        />
       </section>
 
       <section className="listUsers">

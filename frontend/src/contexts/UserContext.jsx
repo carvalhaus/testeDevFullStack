@@ -16,11 +16,15 @@ export const UserProvider = ({ children }) => {
         setUsers(users);
       })
       .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          setError(err.response);
+        if (err.code === "ERR_NETWORK") {
+          const errorMessage = err.message;
 
-          console.error(err);
+          setError(errorMessage);
+
+          alert(errorMessage);
         }
+
+        console.error(err.code);
       });
   }
 
@@ -30,24 +34,31 @@ export const UserProvider = ({ children }) => {
         setUserData(user);
       })
       .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          setError(err.response);
+        if (err.code === "ERR_NETWORK") {
+          const errorMessage = err.message;
 
-          console.error(err);
+          setError(errorMessage);
         }
+
+        console.error(err);
       });
   }
 
-  function removeUser(id, token) {
-    deleteUser(token, id)
+  function removeUser(id, token, loggedUserLevel) {
+    deleteUser(token, id, loggedUserLevel)
       .then(() => {
         alert("Usuário excluído com sucesso!");
         loadUsers();
       })
       .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          return alert("Não foi possível excluir o usuário!");
+        if (err.status === 400 || err.status === 403) {
+          const errorMessage = err.response.data.message;
+
+          setError(errorMessage);
+
+          alert(errorMessage);
         }
+
         console.error(err);
       });
   }

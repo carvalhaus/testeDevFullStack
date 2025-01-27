@@ -32,7 +32,7 @@ function Actions({ loggedUserId, loggedUserLevel, user }) {
   function onDelete() {
     const token = localStorage.getItem("token");
 
-    removeUser(user.id, token);
+    removeUser(user.id, token, loggedUserLevel);
   }
 
   useEffect(() => {
@@ -104,6 +104,7 @@ function Actions({ loggedUserId, loggedUserLevel, user }) {
           title="Editar"
           user={selectedUser}
           onClose={closeModal}
+          loggedUserLevel={loggedUserLevel}
         />
       )}
     </div>

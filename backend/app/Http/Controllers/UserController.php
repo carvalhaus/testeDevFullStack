@@ -34,6 +34,18 @@ class UserController extends Controller implements HasMiddleware
 
         $currentTimestamp = Carbon::now();
 
+        $loggedUserLevel = $req->input('loggedUserLevel', null);
+
+        if (is_null($loggedUserLevel)) {
+            return response()->json(["message" => "Missing loggedUserLevel"], 400);
+        }
+        
+        if ($loggedUserLevel == 3) {
+            return response()->json([
+                "message" => "You do not have permission to create users."
+            ], 403);
+        }
+
         $validated = $req->validate([
             'email' => 'required|email|unique:users,email',
             'name' => 'required|string|max:255',
@@ -65,6 +77,18 @@ class UserController extends Controller implements HasMiddleware
         $user = User::findOrFail($id);
 
         $currentTimestamp = Carbon::now();
+
+        $loggedUserLevel = $req->input('loggedUserLevel', null);
+
+        if (is_null($loggedUserLevel)) {
+            return response()->json(["message" => "Missing loggedUserLevel"], 400);
+        }
+        
+        if ($loggedUserLevel == 3) {
+            return response()->json([
+                "message" => "You do not have permission to update users."
+            ], 403);
+        }
 
         $validated = $req->validate([
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
@@ -103,8 +127,20 @@ class UserController extends Controller implements HasMiddleware
         return response()->json($user);;
     }
 
-    public function destroy($id)
+    public function destroy(Request $req, $id)
     {
+        $loggedUserLevel = $req->header('loggedUserLevel', null);
+
+        if (is_null($loggedUserLevel)) {
+            return response()->json(["message" => "Missing loggedUserLevel"], 400);
+        }
+        
+        if ($loggedUserLevel != 1) {
+            return response()->json([
+                "message" => "You do not have permission to delete users."
+            ], 403);
+        }
+
         User::destroy($id);
         return response()->json(null, 204);
     }

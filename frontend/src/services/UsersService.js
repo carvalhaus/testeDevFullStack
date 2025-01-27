@@ -23,6 +23,7 @@ export async function createUser(formData, token) {
   const headers = { Authorization: `Bearer ${token}` };
 
   const newUser = {
+    loggedUserLevel: formData.loggedUserLevel,
     email: formData.email,
     name: formData.name,
     password: formData.password,
@@ -40,6 +41,7 @@ export async function updateUser(formData, token, id) {
   const headers = { Authorization: `Bearer ${token}` };
 
   const updatedUser = {
+    loggedUserLevel: formData.loggedUserLevel,
     email: formData.email,
     name: formData.name,
     password: formData.password,
@@ -51,10 +53,13 @@ export async function updateUser(formData, token, id) {
   return response.data;
 }
 
-export async function deleteUser(token, id) {
+export async function deleteUser(token, id, loggedUserLevel) {
   const deleteUrl = `${API_URL}users/${id}`;
 
-  const headers = { Authorization: `Bearer ${token}` };
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    loggedUserLevel: loggedUserLevel,
+  };
 
   const response = await axios.delete(deleteUrl, { headers });
 

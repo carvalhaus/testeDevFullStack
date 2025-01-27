@@ -3,7 +3,7 @@ import userPlus from "../../assets/userPlus.svg";
 import { useEffect, useRef, useState } from "react";
 import UserModal from "../UserModal/userModal";
 
-function CreateUser({ disabled }) {
+function CreateUser({ disabled, loggedUserLevel }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const buttonRef = useRef(null);
   const modalRef = useRef(null);
@@ -45,7 +45,12 @@ function CreateUser({ disabled }) {
       </button>
 
       {isModalOpen && (
-        <UserModal ref={modalRef} title="Cadastrar" onClose={closeModal} />
+        <UserModal
+          ref={modalRef}
+          title="Cadastrar"
+          onClose={closeModal}
+          loggedUserLevel={loggedUserLevel}
+        />
       )}
     </div>
   );
